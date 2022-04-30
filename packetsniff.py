@@ -120,8 +120,11 @@ def get_git_repos():
             print("Tarred the file! Uploading to Drive!")
             uploadToDrive(dest_folder,'application/tar')    
             print("Uploading done!")
+            delete_command="rm -rf {}".format(dest_folder)
+            subprocess.run(delete_command, capture_output=False, shell=True)
         except:
             continue
+        subprocess.run("rm -rf gitFiles/*", capture_output=False, shell=True)
     return 
 
 if __name__ == '__main__':
