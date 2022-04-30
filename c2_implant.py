@@ -47,8 +47,8 @@ def parse_command(command):
     tokens = command.split(" ")
     if len(tokens) < 1:
         return
-    if tokens[0] in sub_table.keys():
-        keyphrase = sub_table[tokens[0]]
+    if tokens[0] in secrets["FUNC_TABLE"].keys():
+        keyphrase = secrets["FUNC_TABLE"][tokens[0]]
     else:
         print("invalid command")
         return
