@@ -8,8 +8,10 @@ from cryptography.fernet import Fernet
 
 import discord
 import sys
+import json
 
-key = b'dM22m7nTndj8WjFatZ_1CPDsyboSUwjHrL-_w4acHjY='
+f = open('secrets.json')
+secrets = json.load(f)
 
 def encrypt_message(message, key):
     f = Fernet(key)
@@ -26,5 +28,5 @@ def prepare_command(command, key):
     embedded_command = embed_message(command_ciphertext)
     return embedded_command
 
-image = prepare_command(sys.argv[1], key)
+image = prepare_command(sys.argv[1], secrets["ENCRYPTION_KEY"])
 image.save('./secret_img/upload.png')

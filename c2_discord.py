@@ -1,9 +1,10 @@
 import discord
 import requests
 import sys
+import json
 
-IMAGE_DOWNLOAD_PATH = './secret_img/downloaded.png'
-DISCORD_API_KEY = 'OTY4MzM4MjA4MDA4MDU2OTQy.YmdZOw.bf6adJCQDrqlHPKOzn-k_nBb4fc'
+f = open('secrets.json')
+secrets = json.load(f)
 
 client = discord.Client()
 guild = discord.Guild
@@ -29,10 +30,10 @@ async def on_ready():
         image_url = message.attachments[0].url
 
         img_data = requests.get(image_url).content
-        with open(IMAGE_DOWNLOAD_PATH, 'wb') as handler:
+        with open(secrets['IMAGE_DOWNLOAD_PATH'], 'wb') as handler:
             handler.write(img_data)
     else:
         print('no messages')
     await client.close()
     
-client.run(DISCORD_API_KEY)
+client.run(secrets['DISCORD_API_KEY'])
