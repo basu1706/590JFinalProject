@@ -16,10 +16,6 @@ import sys
 f = open('secrets.json')
 secrets = json.load(f)
 
-f = open("commands.json")
-sub_table = json.load(f)
-
-
 SLEEP_TIME = 5
 
 def extract_message(image):
