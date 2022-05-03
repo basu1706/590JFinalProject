@@ -45,17 +45,15 @@ def generate_hash_and_salt(password):
 
 # json_dump(res, 'tmp.json')
 
-print(secrets['DESTROY_CREDS']['key'].encode("iso-8859-1") == hashlib.pbkdf2_hmac('sha256', 'begone thot'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128))
+# print(secrets['DESTROY_CREDS']['key'].encode("iso-8859-1") == hashlib.pbkdf2_hmac('sha256', 'begone thot'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128))
 
-old_key = secrets['DESTROY_CREDS']['key'].encode("iso-8859-1")
-new_key = hashlib.pbkdf2_hmac('sha256', 'begon tho'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
+# old_key = secrets['DESTROY_CREDS']['key'].encode("iso-8859-1")
+# new_key = hashlib.pbkdf2_hmac('sha256', 'begon tho'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
 
-print(old_key)
-print(new_key)
+# print(old_key)
+# print(new_key)
 
-print(old_key == new_key)
+# print(old_key == new_key)
 
-
-
-#image = prepare_command(sys.argv[1], secrets["ENCRYPTION_KEY"])
-#image.save('./secret_img/upload.png')
+image = prepare_command(sys.argv[1], secrets["ENCRYPTION_KEY"])
+image.save('./secret_img/upload.png')

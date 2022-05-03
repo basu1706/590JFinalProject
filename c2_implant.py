@@ -14,6 +14,7 @@ from sys import argv
 import time
 import json
 import sys
+import hashlib
 
 def app_path():
     if getattr(sys, 'frozen', False):
@@ -90,7 +91,12 @@ def parse_command(command):
         if len(tokens) < 2:
             print('missing arguments')
             return
-        destruct()
+        stored_key = secrets['DESTROY_CREDS']['key'].encode("iso-8859-1")
+        new_key = hashlib.pbkdf2_hmac('sha256', sys.argv[1].encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
+        if new_key == stored_key:
+            destruct()
+        else:
+            print("Wrong!")
     elif keyphrase == "setsleep":
         if len(tokens) < 2:
             print('missing arguments')

