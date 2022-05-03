@@ -11,8 +11,6 @@ import helper
 from os import remove
 from sys import argv
 
-import subprocess
-
 import time
 import json
 import sys
