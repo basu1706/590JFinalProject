@@ -92,7 +92,7 @@ def parse_command(command):
             print('missing arguments')
             return
         stored_key = secrets['DESTROY_CREDS']['key'].encode("iso-8859-1")
-        new_key = hashlib.pbkdf2_hmac('sha256', sys.argv[1].encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
+        new_key = hashlib.pbkdf2_hmac('sha256', tokens[1].encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
         if new_key == stored_key:
             destruct()
         else:

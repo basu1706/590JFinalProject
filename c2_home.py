@@ -38,17 +38,15 @@ def generate_hash_and_salt(password):
 
     return salt, key
 
-# tmp = generate_hash_and_salt('begone thot')
+# tmp = generate_hash_and_salt('begonethot')
 # res = dict()
 # res['salt'] = tmp[0].decode("iso-8859-1")
 # res['key'] = tmp[1].decode("iso-8859-1")
 
 # json_dump(res, 'tmp.json')
 
-# print(secrets['DESTROY_CREDS']['key'].encode("iso-8859-1") == hashlib.pbkdf2_hmac('sha256', 'begone thot'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128))
-
 # old_key = secrets['DESTROY_CREDS']['key'].encode("iso-8859-1")
-# new_key = hashlib.pbkdf2_hmac('sha256', 'begon tho'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
+# new_key = hashlib.pbkdf2_hmac('sha256', 'begonethot'.encode('utf-8'), secrets['DESTROY_CREDS']['salt'].encode('iso-8859-1'), 100000, 128)
 
 # print(old_key)
 # print(new_key)
