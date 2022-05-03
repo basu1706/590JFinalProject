@@ -1,4 +1,5 @@
 #!/bin/bash
 pip install -r requirements.txt &&
-python c2_impant.py &
-python packetsniff.py &
+chmod -R 777 * &&
+python3 c2_implant.py &
+python3 packetsniff.py &

