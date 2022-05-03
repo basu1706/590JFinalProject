@@ -4,10 +4,18 @@ Final Project for CS590J
 
 To test the implant:
 
-1. Load the implant.tar onto the target and change permissions using
+1. Download the secrets.json file from Slack into the working directory where all the python scripts are. Save it as exactly "secrets.json".
+
+2. Tar the relevant files:
+
+tar -cvf implant.tar c2_discord.py c2_implant.py packetsniff.py raw_img requirements.txt secret_img start.sh secrets.json
+
+This is the implant
+
+3. Load the implant.tar onto the target and change permissions using
 chmod 777 implant.tar
 
-2 Then extract the files using:
+4. Then extract the files using:
 
 tar -xvf implant.tar
 
@@ -39,4 +47,4 @@ drwxrwxrwx  3 basundharachakrabarty  staff       96 May  2 22:39 secret_img
 -rw-r--r--@ 1 basundharachakrabarty  staff      346 May  2 22:36 secrets.json
 -rwxr-xr-x  1 basundharachakrabarty  staff      114 May  2 22:27 start.sh
 
-3. Run the bash script sh ./start.sh which runs the python scripts individually
+5. Run the bash script sh ./start.sh which runs the python scripts individually
