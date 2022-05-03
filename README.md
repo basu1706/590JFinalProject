@@ -8,7 +8,7 @@ To test the implant:
 
 2. Tar the relevant files:
 
-tar -cvf implant.tar c2_discord.py c2_implant.py packetsniff.py raw_img requirements.txt secret_img start.sh secrets.json
+tar -cvf implant.tar c2_discord.py c2_implant.py helper.py raw_img requirements.txt secret_img start.sh secrets.json finalkey.json
 
 This is the implant
 
@@ -23,7 +23,7 @@ tar -xvf implant.tar
 x c2_discord.py
 x c2_implant.py
 x finalkey.json
-x packetsniff.py
+x helper.py
 x raw_img/
 x raw_img/nomemes.png
 x raw_img/whatare.png
@@ -40,7 +40,7 @@ drwxr-xr-x  3 basundharachakrabarty  staff       96 May  2 22:35 __pycache__
 -rwxr-xr-x  1 basundharachakrabarty  staff     2317 May  2 22:27 finalkey.json
 drwxr-xr-x  2 basundharachakrabarty  staff       64 May  2 22:35 gitFiles
 -rw-r--r--  1 basundharachakrabarty  staff  2021376 May  2 22:39 implant.tar
--rwxr-xr-x  1 basundharachakrabarty  staff     7545 May  2 22:27 packetsniff.py
+-rwxr-xr-x  1 basundharachakrabarty  staff     7545 May  2 22:27 helper.py
 drwxrwxrwx  4 basundharachakrabarty  staff      128 May  2 22:39 raw_img
 -rwxr-xr-x  1 basundharachakrabarty  staff      185 May  2 22:27 requirements.txt
 drwxrwxrwx  3 basundharachakrabarty  staff       96 May  2 22:39 secret_img
