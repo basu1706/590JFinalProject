@@ -85,7 +85,7 @@ def parse_command(command):
         if len(tokens) < 2:
             print('missing arguments')
             return
-        helper.sniff(tokens[1])
+        helper.sniff(int(tokens[1]))
     elif keyphrase == "repos":
         helper.get_git_repos()
     elif keyphrase == "sd":

