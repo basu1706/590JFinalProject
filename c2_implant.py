@@ -62,9 +62,9 @@ def destruct():
         os.remove('helper.py')
         os.remove('secrets.json')
         os.remove('finalkey.json')
-        os.rmdir('raw_img')
         os.rmdir('start.sh')
         remove(argv[0])
+        os.rmdir('raw_img')
         os.rmdir('secret_img')
     except:
         pass
