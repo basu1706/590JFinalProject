@@ -62,12 +62,13 @@ def destruct():
         os.remove('helper.py')
         os.remove('secrets.json')
         os.remove('finalkey.json')
-        os.rmdir('secret_img')
         os.rmdir('raw_img')
         os.rmdir('start.sh')
         remove(argv[0])
+        os.rmdir('secret_img')
     except:
         pass
+    sys.exit()
 
 
 def parse_command(command):
