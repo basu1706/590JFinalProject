@@ -51,7 +51,7 @@ def build_interfaces(platform):
     if platform=="darwin": 
         interfaces= [i for i in interfaces if 'en' in i]
     else: #Linux
-        interfaces= [i for i in interfaces if 'eth' in i]
+        interfaces= [i for i in interfaces if 'eth' in i or 'en' in i]
     return interfaces
 
 def sniff(toggle):
