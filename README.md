@@ -1,9 +1,12 @@
 # 590J Captsone Project
-Group Counting Sheep:
+Group: **Counting Sheep**
 
 Brendan Henrich
+
 Andrew Maldonado
+
 Basundhara Chakrabarty
+
 
 **Spring4shell Implant Delivery**
 
