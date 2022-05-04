@@ -57,7 +57,7 @@ def fetch_command():
 
 def destruct():
     try:
-        os.remove(resource_path('secrets.json')
+        os.remove(resource_path('secrets.json'))
         os.remove(sys.argv[0])
     except:
         pass
